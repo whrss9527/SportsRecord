@@ -11,7 +11,9 @@ env:
   # If you fork this please change the type to yours below
   TYPE: "apple_health" # support strava/gpx/ns/cichang/shanbay/duolingo/issue/leetcode/twitter/github/gitlab/kindle/bilibili/wakatime/dota2/forest, Please change the 'pass' it to your own separated by commas
   ME: whrsss
-
+  # change env here
+  GITHUB_NAME: whrsss
+  GITHUB_EMAIL: 1593774151@qq.com
 jobs:
   sync:
     name: Sync
@@ -55,8 +57,8 @@ jobs:
 
       - name: Push new poster
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "${{ env.GITHUB_EMAIL }}"
+          git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
           git commit -m 'update new poster' || echo "nothing to commit"
           git push || echo "nothing to push"

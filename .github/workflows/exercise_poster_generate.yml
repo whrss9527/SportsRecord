@@ -6,6 +6,13 @@ name: Run Poster Generate
 #    - cron: "0 0 * * *"
 on:
   workflow_dispatch:
+    inputs:
+      time:
+        description: 'time list'
+        required: false
+      value:
+        description: 'value list'
+        required: false
   pull_request:
   
 env:

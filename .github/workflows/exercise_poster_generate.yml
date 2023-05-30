@@ -57,7 +57,7 @@ jobs:
       - name: Run sync apple_health script
         if: contains(env.TYPE, 'apple_health')
         run: |
-          python -m github_poster apple_health --date $'${{ github.event.inputs.time }}' --value $'${{ github.event.inputs.value }}' --apple_health_record_type exercise --me "whrsss"
+          python -m github_poster apple_health --date ${{ github.event.inputs.time }} --value ${{ github.event.inputs.value }} --apple_health_record_type exercise --me "whrsss"
 
       - name: Mv svg files to examples
         # only for me to show

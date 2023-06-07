@@ -3,8 +3,9 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict, namedtuple
 from numbers import Number
-# from typing import Dict
 from typing import List
+# from typing import Dict
+
 
 
 import pendulum
@@ -18,7 +19,7 @@ RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "
 
 HEALTH_RECORD_TYPES = {
     "move": RecordMetadata(
-        ["HKQuantityTypeIdentifierActiveEnergyBurned",""],
+        ["HKQuantityTypeIdentifierActiveEnergyBurned","HKQuantityTypeIdentifierBasalEnergyBurned"],
         "kCal",
         "#ED619C",
         lambda x: float(x),
@@ -120,12 +121,12 @@ class AppleHealthLoader(BaseLoader):
             if elem.tag != "Record":
                 continue
 
-            if elem.attrib["type"] in self.record_metadata.type:
+            if elem.attrib["type"] in self.record_metadata.types:
                 in_target_section = True
                 created = pendulum.from_format(
                     elem.attrib["creationDate"], "YYYY-MM-DD HH:mm:ss ZZ"
                 )
-                if created.year >= self.from_year and created.year <= self.to_year:
+                if self.from_year <= created.year <= self.to_year:
                     from_export[created.to_date_string()] += self.record_metadata.func(
                         elem.attrib["value"]
                     )

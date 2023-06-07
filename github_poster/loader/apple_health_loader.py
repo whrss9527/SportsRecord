@@ -3,28 +3,31 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict, namedtuple
 from numbers import Number
-from typing import Dict
+# from typing import Dict
+from typing import List
+
 
 import pendulum
 
 from github_poster.loader.base_loader import BaseLoader
+RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "func"])
 
 # func is a lambda that converts the "value" attribute of the record to a numeric value.
-RecordMetadata = namedtuple("RecordMetadata", ["type", "unit", "track_color", "func"])
+# RecordMetadata = namedtuple("RecordMetadata", ["type", "unit", "track_color", "func"])
 
 
 HEALTH_RECORD_TYPES = {
     "move": RecordMetadata(
-        "HKQuantityTypeIdentifierActiveEnergyBurned",
+        ["HKQuantityTypeIdentifierActiveEnergyBurned",""],
         "kCal",
         "#ED619C",
         lambda x: float(x),
     ),
     "exercise": RecordMetadata(
-        "HKQuantityTypeIdentifierAppleExerciseTime", "mins", "#D7FD37", lambda x: int(x)
+        ["HKQuantityTypeIdentifierAppleExerciseTime"], "mins", "#D7FD37", lambda x: int(x)
     ),
     "stand": RecordMetadata(
-        "HKCategoryTypeIdentifierAppleStandHour",
+        ["HKCategoryTypeIdentifierAppleStandHour"],
         "hours",
         "#62F90B",
         lambda x: 1 if "HKCategoryValueAppleStandHourStood" else 0,
@@ -117,7 +120,7 @@ class AppleHealthLoader(BaseLoader):
             if elem.tag != "Record":
                 continue
 
-            if elem.attrib["type"] == self.record_metadata.type:
+            if elem.attrib["type"] in self.record_metadata.type:
                 in_target_section = True
                 created = pendulum.from_format(
                     elem.attrib["creationDate"], "YYYY-MM-DD HH:mm:ss ZZ"

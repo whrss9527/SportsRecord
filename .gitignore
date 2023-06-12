@@ -140,3 +140,4 @@ test.py
 github_poster/data/*
 
 data/*
+/IN_FOLDER/apple_health_export/

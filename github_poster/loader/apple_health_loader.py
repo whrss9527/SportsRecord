@@ -5,11 +5,10 @@ from collections import defaultdict, namedtuple
 from numbers import Number
 from typing import List
 # from typing import Dict
-
-
-
 import pendulum
-
+import sys
+print("dates:", sys.argv[sys.argv.index("--dates") + 1 : sys.argv.index("--values")])
+print("values:", sys.argv[sys.argv.index("--values") + 1 :])
 from github_poster.loader.base_loader import BaseLoader
 RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "func"])
 
@@ -45,13 +44,27 @@ class AppleHealthLoader(BaseLoader):
         self.number_by_date_dict: Dict[str, Number] = {}
         self.apple_health_export_file = kwargs.get("apple_health_export_file")
         self.apple_health_record_type = kwargs.get("apple_health_record_type")
-        self.apple_health_date = kwargs.get("apple_health_date")
-        self.apple_health_value = kwargs.get("apple_health_value")
+        self.dates = kwargs.get("dates")
+        self.values = kwargs.get("values")
         self.apple_health_mode = kwargs.get("apple_health_mode")
         self.record_metadata = HEALTH_RECORD_TYPES[self.apple_health_record_type]
 
     @classmethod
     def add_loader_arguments(cls, parser, optional):
+        parser.add_argument(
+            "--dates",
+            dest="dates",
+            nargs="+",
+            type=str,
+            help="Array of Apple Health record dates",
+        )
+        parser.add_argument(
+            "--values",
+            dest="values",
+            nargs="+",
+            type=str,
+            help="Array of Apple Health record values",
+        )
         parser.add_argument(
             "--apple_health_date",
             dest="apple_health_date",
@@ -109,9 +122,10 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        date_str = pendulum.parse(self.apple_health_date).to_date_string()
-        value = self.record_metadata.func(self.apple_health_value)
-        self.number_by_date_dict[date_str] = value
+        for date, value in zip(self.dates, self.values):
+            date_str = pendulum.parse(date).to_date_string()
+            value = self.record_metadata.func(value)
+            self.number_by_date_dict[date_str] = value
 
     def backfill(self):
         from_export = defaultdict(int)

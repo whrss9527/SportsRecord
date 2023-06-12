@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       time:
-        description: 'time list'
+        description: 'time str'
         required: false
       value:
-        description: 'value list'
+        description: 'value str'
         required: false
   pull_request:
   

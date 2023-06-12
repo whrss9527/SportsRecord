@@ -9,7 +9,6 @@ on:
       value:
         description: 'value str'
         required: false
-  pull_request:
   
 env:
   TYPE: "apple_health"

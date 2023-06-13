@@ -6,9 +6,9 @@ from numbers import Number
 from typing import List
 # from typing import Dict
 import pendulum
-import sys
-print("dates:", sys.argv[sys.argv.index("--dates") + 1 : sys.argv.index("--values")])
-print("values:", sys.argv[sys.argv.index("--values") + 1 :])
+# import sys
+# print("dates:", sys.argv[sys.argv.index("--dates") + 1 : sys.argv.index("--values")])
+# print("values:", sys.argv[sys.argv.index("--values") + 1 :])
 from github_poster.loader.base_loader import BaseLoader
 RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "func"])
 
@@ -18,7 +18,7 @@ RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "
 
 HEALTH_RECORD_TYPES = {
     "move": RecordMetadata(
-        ["HKQuantityTypeIdentifierActiveEnergyBurned","HKQuantityTypeIdentifierBasalEnergyBurned"],
+        ["HKQuantityTypeIdentifierActiveEnergyBurned"],
         "kCal",
         "#ED619C",
         lambda x: float(x),

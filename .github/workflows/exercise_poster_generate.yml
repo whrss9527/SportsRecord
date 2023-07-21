@@ -49,8 +49,10 @@ jobs:
       - name: Run sync apple_health script
         if: contains(env.TYPE, 'apple_health')
         run: |
-          IFS=$'\n' read -d '' -r -a dates <<< "${{ github.event.inputs.time }}"
-          IFS=$'\n' read -d '' -r -a values <<< "${{ github.event.inputs.value }}"
+          IFS=' ' read -r -a dates <<< "${{ github.event.inputs.time }}"
+          IFS=' ' read -r -a values <<< "${{ github.event.inputs.value }}"
+          dates=("${dates[@]//$'\n'/ }")
+          values=("${values[@]//$'\n'/ }")
           python3 -m github_poster apple_health --apple_health_mode incremental --dates "${dates[@]}" --values  "${values[@]}" --year 2020-2023 --apple_health_record_type move --me "whrsss"
 
       - name: Push new poster

@@ -125,7 +125,10 @@ class AppleHealthLoader(BaseLoader):
         for date, value in zip(self.dates, self.values):
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
-            self.number_by_date_dict[date_str] = value
+            if date_str in self.number_by_date_dict:
+                self.number_by_date_dict[date_str] += value
+            else:
+                self.number_by_date_dict[date_str] = value
 
     def backfill(self):
         from_export = defaultdict(int)

@@ -122,7 +122,6 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        print("len:"+len(self.dates))
         for i in range(len(self.dates)):
             date = self.dates[i]
             value = self.values[i]

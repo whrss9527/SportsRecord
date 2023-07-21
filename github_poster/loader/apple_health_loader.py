@@ -123,10 +123,13 @@ class AppleHealthLoader(BaseLoader):
 
     def incremental(self):
 
-        for date, value in zip(self.dates, self.values):
+        for i in range(len(self.dates)):
+            date = self.dates[i]
+            value = self.values[i]
+
             print("date:", date)
             print("value:", value)
-            print("\n")
+
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
             if date_str in self.number_by_date_dict:

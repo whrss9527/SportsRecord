@@ -122,8 +122,11 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        self.number_by_date_dict.clear()
+
         for date, value in zip(self.dates, self.values):
+            print("date:", date)
+            print("value:", value)
+            print("\n")
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
             if date_str in self.number_by_date_dict:

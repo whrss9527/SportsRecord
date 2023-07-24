@@ -126,12 +126,10 @@ class AppleHealthLoader(BaseLoader):
     def incremental(self):
         dates = json.loads(self.dates)
         values = json.loads(self.values)
+
         for i in range(len(dates)):
             date = dates[i]
             value = values[i]
-
-            print("date:", date)
-            print("value:", value)
 
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)

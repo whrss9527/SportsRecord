@@ -37,6 +37,7 @@ HEALTH_RECORD_TYPES = {
 }
 
 def parse_ios_str_to_list(list_str):
+    list_str = str(list_str)  # 将列表转换为字符串
     print("list_str:", list_str)
     list_str = list_str.replace("[", "").replace("]", "")
     l = list_str.split('\n')

@@ -14,6 +14,8 @@ RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "
 
 # func is a lambda that converts the "value" attribute of the record to a numeric value.
 # RecordMetadata = namedtuple("RecordMetadata", ["type", "unit", "track_color", "func"])
+import json
+
 
 
 HEALTH_RECORD_TYPES = {
@@ -122,9 +124,11 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        for i in range(len(self.dates)):
-            date = self.dates[i]
-            value = self.values[i]
+        dates = json.loads(self.dates)
+        values = json.loads(self.values)
+        for i in range(len(dates)):
+            date = dates[i]
+            value = values[i]
 
             print("date:", date)
             print("value:", value)

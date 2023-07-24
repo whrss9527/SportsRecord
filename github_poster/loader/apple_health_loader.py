@@ -36,7 +36,10 @@ HEALTH_RECORD_TYPES = {
     ),
 }
 
-
+def parse_ios_str_to_list(list_str):
+    l = list_str.splitlines()
+    # filter the empty value
+    return [i for i in l if i]
 class AppleHealthLoader(BaseLoader):
     HISTORY_FILE = os.path.join("IN_FOLDER", "apple_history.json")
 
@@ -124,19 +127,19 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        dates = json.loads(self.dates)
-        values = json.loads(self.values)
-
-        for i in range(len(dates)):
-            date = dates[i]
-            value = values[i]
-
+        time_list = parse_ios_str_to_list(self.dates)
+        value_list = parse_ios_str_to_list(self.values)
+        value_list = [int(float(i)) for i in value_list]
+        for i in range(len(time_list)):
+            date = time_list[i]
+            value = value_list[i]
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
             if date_str in self.number_by_date_dict:
                 self.number_by_date_dict[date_str] += value
             else:
                 self.number_by_date_dict[date_str] = value
+
 
     def backfill(self):
         from_export = defaultdict(int)
@@ -146,12 +149,12 @@ class AppleHealthLoader(BaseLoader):
             if elem.tag != "Record":
                 continue
 
-            if elem.attrib["type"] in self.record_metadata.types:
+            if elem.attrib["type"] == self.record_metadata.type:
                 in_target_section = True
                 created = pendulum.from_format(
                     elem.attrib["creationDate"], "YYYY-MM-DD HH:mm:ss ZZ"
                 )
-                if self.from_year <= created.year <= self.to_year:
+                if created.year >= self.from_year and created.year <= self.to_year:
                     from_export[created.to_date_string()] += self.record_metadata.func(
                         elem.attrib["value"]
                     )

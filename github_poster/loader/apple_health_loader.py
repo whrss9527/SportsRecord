@@ -38,7 +38,8 @@ HEALTH_RECORD_TYPES = {
 
 def parse_ios_str_to_list(list_str):
     print("list_str:", list_str)
-    l = list_str.splitlines()
+    list_str = list_str.replace("[", "").replace("]", "")
+    l = list_str.split('\n')
     # filter the empty value
     return [i for i in l if i]
 class AppleHealthLoader(BaseLoader):

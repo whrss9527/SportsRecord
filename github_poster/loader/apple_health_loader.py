@@ -136,6 +136,8 @@ class AppleHealthLoader(BaseLoader):
         for i in range(len(time_list)):
             date = time_list[i]
             value = value_list[i]
+            print("date:", date)
+            print("value:", value)
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
             if date_str in self.number_by_date_dict:

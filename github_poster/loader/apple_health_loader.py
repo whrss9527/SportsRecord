@@ -130,12 +130,21 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
+        merged_values = {}
         time_list = parse_ios_str_to_list(self.dates)
         value_list = parse_ios_str_to_list(self.values)
         value_list = [int(float(i)) for i in value_list]
         for i in range(len(time_list)):
             date = time_list[i]
             value = value_list[i]
+            date_str = pendulum.parse(date).to_date_string()
+            value = self.record_metadata.func(value)
+            if date_str in merged_values:
+                merged_values[date_str] += value
+            else:
+                merged_values[date_str] = value
+
+        for date, value in merged_values.items():
             print("date:", date)
             print("value:", value)
             date_str = pendulum.parse(date).to_date_string()

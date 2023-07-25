@@ -140,10 +140,7 @@ class AppleHealthLoader(BaseLoader):
             print("value:", value)
             date_str = pendulum.parse(date).to_date_string()
             value = self.record_metadata.func(value)
-            if date_str in self.number_by_date_dict:
-                self.number_by_date_dict[date_str] += value
-            else:
-                self.number_by_date_dict[date_str] = value
+            self.number_by_date_dict[date_str] = value
 
 
     def backfill(self):

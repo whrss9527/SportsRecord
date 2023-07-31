@@ -11,7 +11,7 @@ on:
         required: false
   
 env:
-  TYPE: "apple_health"
+  TYPE: "AppleHealthData"
   ME: whrsss
   # change env here
   GITHUB_NAME: whrsss
@@ -46,10 +46,10 @@ jobs:
           pip install -r requirements.txt
         if: steps.pip-cache.outputs.cache-hit != 'true'
 
-      - name: Run sync apple_health script
-        if: contains(env.TYPE, 'apple_health')
+      - name: Run sync AppleHealthData script
+        if: contains(env.TYPE, 'AppleHealthData')
         run: |
-          python3 -m github_poster apple_health --apple_health_mode incremental --dates $'${{ github.event.inputs.time }}' --values  $'${{ github.event.inputs.value }}' --year 2020-2023 --apple_health_record_type move --me "了迹奇有没"
+          python3 -m github_poster AppleHealthData --apple_health_mode incremental --dates $'${{ github.event.inputs.time }}' --values  $'${{ github.event.inputs.value }}' --year 2020-2023 --apple_health_record_type move --me "了迹奇有没"
 
       - name: Push new poster
         run: |

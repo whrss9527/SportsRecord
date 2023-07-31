@@ -32,7 +32,7 @@ from github_poster.loader.weread_loader import WereadLoader
 from github_poster.loader.youtube_loader import YouTubeLoader
 
 LOADER_DICT = {
-    "apple_health": AppleHealthLoader,
+    "AppleHealthData": AppleHealthLoader,
     "bbdc": BBDCLoader,
     "duolingo": DuolingoLoader,
     "shanbay": ShanBayLoader,

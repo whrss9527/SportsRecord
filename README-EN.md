@@ -542,18 +542,18 @@ increment mode (default）is good for daily update. iOS Shortcut can be used to 
 Read [this repo](https://github.com/yihong0618/iBeats) for more details.
 <br>
 ```
-python3 -m github_poster apple_health --date <date-str> --value <value> --apple_health_record_type <move, exercise, stand> --me "your name"
+python3 -m github_poster AppleHealthData --date <date-str> --value <value> --apple_health_record_type <move, exercise, stand> --me "your name"
 or
-github_poster apple_health --appple_health_date <date-str> --apple_health_value <value> --apple_health_record_type <move, exercise, stand> --me "your name"
+github_poster AppleHealthData --appple_health_date <date-str> --apple_health_value <value> --apple_health_record_type <move, exercise, stand> --me "your name"
 ```
 
 backfill mode is good for dumping all data at once.
 Open the Health App, click on the avatar on the top right corner, select "Export All Health Data" on the bottom, copy the zip file to `IN-FOLDER` and unzip. You will get a `apple_health_export` folder. Then run:
 <br>
 ```
-python3 -m github_poster apple_health --apple_health_mode backfill --year 2015-2021 --apple_health_record_type <move, exercise, stand> --me "your name"
+python3 -m github_poster AppleHealthData --apple_health_mode backfill --year 2015-2021 --apple_health_record_type <move, exercise, stand> --me "your name"
 or
-github_poster apple_health --apple_health_mode backfill --year 2015-2021 --apple_health_record_type <move, exercise, stand> --me "your name"
+github_poster AppleHealthData --apple_health_mode backfill --year 2015-2021 --apple_health_record_type <move, exercise, stand> --me "your name"
 ```
 </details>
 

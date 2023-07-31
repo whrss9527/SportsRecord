@@ -49,7 +49,7 @@ jobs:
       - name: Run sync apple_health script
         if: contains(env.TYPE, 'apple_health')
         run: |
-          python3 -m github_poster apple_health --apple_health_mode incremental --dates $'${{ github.event.inputs.time }}' --values  $'${{ github.event.inputs.value }}' --year 2020-2023 --apple_health_record_type move --me "whrsss"
+          python3 -m github_poster apple_health --apple_health_mode incremental --dates $'${{ github.event.inputs.time }}' --values  $'${{ github.event.inputs.value }}' --year 2020-2023 --apple_health_record_type move --me "了迹奇有没"
 
       - name: Push new poster
         run: |

@@ -159,8 +159,7 @@ class AppleHealthLoader(BaseLoader):
         for _, elem in ET.iterparse(self.apple_health_export_file, events=["end"]):
             if elem.tag != "Record":
                 continue
-
-            if elem.attrib["type"] == self.record_metadata.type:
+            if elem.attrib["type"] == self.record_metadata.types:
                 in_target_section = True
                 created = pendulum.from_format(
                     elem.attrib["creationDate"], "YYYY-MM-DD HH:mm:ss ZZ"

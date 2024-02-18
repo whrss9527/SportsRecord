@@ -3,46 +3,35 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict, namedtuple
 from numbers import Number
-from typing import List
-# from typing import Dict
+from typing import Dict
+
 import pendulum
-# import sys
-# print("dates:", sys.argv[sys.argv.index("--dates") + 1 : sys.argv.index("--values")])
-# print("values:", sys.argv[sys.argv.index("--values") + 1 :])
+
 from github_poster.loader.base_loader import BaseLoader
-RecordMetadata = namedtuple("RecordMetadata", ["types", "unit", "track_color", "func"])
 
 # func is a lambda that converts the "value" attribute of the record to a numeric value.
-# RecordMetadata = namedtuple("RecordMetadata", ["type", "unit", "track_color", "func"])
-import json
-
+RecordMetadata = namedtuple("RecordMetadata", ["type", "unit", "track_color", "func"])
 
 
 HEALTH_RECORD_TYPES = {
     "move": RecordMetadata(
-        ["HKQuantityTypeIdentifierActiveEnergyBurned"],
+        "HKQuantityTypeIdentifierActiveEnergyBurned",
         "kCal",
         "#ED619C",
         lambda x: float(x),
     ),
     "exercise": RecordMetadata(
-        ["HKQuantityTypeIdentifierAppleExerciseTime"], "mins", "#D7FD37", lambda x: int(x)
+        "HKQuantityTypeIdentifierAppleExerciseTime", "mins", "#D7FD37", lambda x: int(x)
     ),
     "stand": RecordMetadata(
-        ["HKCategoryTypeIdentifierAppleStandHour"],
+        "HKCategoryTypeIdentifierAppleStandHour",
         "hours",
         "#62F90B",
         lambda x: 1 if "HKCategoryValueAppleStandHourStood" else 0,
     ),
 }
 
-def parse_ios_str_to_list(list_str):
-    list_str = str(list_str)  # 将列表转换为字符串
-    print("list_str:", list_str)
-    list_str = list_str.replace("[", "").replace("]", "").replace("'", "").replace("\\n", ",").replace("\\", "")
-    l = list_str.split(',')
-    # filter the empty value
-    return [i for i in l if i]
+
 class AppleHealthLoader(BaseLoader):
     HISTORY_FILE = os.path.join("IN_FOLDER", "apple_history.json")
 
@@ -52,27 +41,13 @@ class AppleHealthLoader(BaseLoader):
         self.number_by_date_dict: Dict[str, Number] = {}
         self.apple_health_export_file = kwargs.get("apple_health_export_file")
         self.apple_health_record_type = kwargs.get("apple_health_record_type")
-        self.dates = kwargs.get("dates")
-        self.values = kwargs.get("values")
+        self.apple_health_date = kwargs.get("apple_health_date")
+        self.apple_health_value = kwargs.get("apple_health_value")
         self.apple_health_mode = kwargs.get("apple_health_mode")
         self.record_metadata = HEALTH_RECORD_TYPES[self.apple_health_record_type]
 
     @classmethod
     def add_loader_arguments(cls, parser, optional):
-        parser.add_argument(
-            "--dates",
-            dest="dates",
-            nargs="+",
-            type=str,
-            help="Array of Apple Health record dates",
-        )
-        parser.add_argument(
-            "--values",
-            dest="values",
-            nargs="+",
-            type=str,
-            help="Array of Apple Health record values",
-        )
         parser.add_argument(
             "--apple_health_date",
             dest="apple_health_date",
@@ -130,27 +105,9 @@ class AppleHealthLoader(BaseLoader):
         self.number_list = list(self.number_by_date_dict.values())
 
     def incremental(self):
-        merged_values = {}
-        time_list = parse_ios_str_to_list(self.dates)
-        value_list = parse_ios_str_to_list(self.values)
-        value_list = [int(float(i)) for i in value_list]
-        for i in range(len(time_list)):
-            date = time_list[i]
-            value = value_list[i]
-            date_str = pendulum.parse(date).to_date_string()
-            value = self.record_metadata.func(value)
-            if date_str in merged_values:
-                merged_values[date_str] += value
-            else:
-                merged_values[date_str] = value
-
-        for date, value in merged_values.items():
-            print("date:", date)
-            print("value:", value)
-            date_str = pendulum.parse(date).to_date_string()
-            value = self.record_metadata.func(value)
-            self.number_by_date_dict[date_str] = value
-
+        date_str = pendulum.parse(self.apple_health_date).to_date_string()
+        value = self.record_metadata.func(self.apple_health_value)
+        self.number_by_date_dict[date_str] = value
 
     def backfill(self):
         from_export = defaultdict(int)
@@ -159,7 +116,8 @@ class AppleHealthLoader(BaseLoader):
         for _, elem in ET.iterparse(self.apple_health_export_file, events=["end"]):
             if elem.tag != "Record":
                 continue
-            if elem.attrib["type"] == self.record_metadata.types:
+
+            if elem.attrib["type"] == self.record_metadata.type:
                 in_target_section = True
                 created = pendulum.from_format(
                     elem.attrib["creationDate"], "YYYY-MM-DD HH:mm:ss ZZ"
